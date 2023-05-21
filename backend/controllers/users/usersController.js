@@ -1,5 +1,7 @@
 const expressAsyncHandler = require("express-async-handler");
 const User = require("../../model/user/User");
+const generateToken = require("../../config/token/generateToken");
+const validateMongoId = require("../utils/validateMongoId");
 
 /* Register */
 const userRegisterController = expressAsyncHandler(async (req, res) => {
@@ -28,11 +30,45 @@ const loginUserController = expressAsyncHandler(async (req, res) => {
   const userFound = await User.findOne({ email });
   //check if password matchs
   if (userFound && (await userFound.isPasswordMatched(password))) {
-    res.json(userFound);
+    res.json({
+      _id: userFound?._id,
+      firstName: userFound?.firstName,
+      lastName: userFound?.lastName,
+      email: userFound?.email,
+      profilePhoto: userFound?.profilePhoto,
+      isAdmin: userFound?.isAdmin,
+      token: generateToken(userFound?._id),
+    });
   } else {
     res.status(401);
     throw new Error(`Login credentials are not valid`);
   }
 });
 
-module.exports = { userRegisterController, loginUserController };
+const fetchUsersController = expressAsyncHandler(async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.json(users);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+const deleteUserController = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  //check if user is valid
+  validateMongoId(id)
+  try {
+    const deletedUser = await User.findByIdAndDelete(id);
+    res.json(deletedUser);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+module.exports = {
+  userRegisterController,
+  loginUserController,
+  fetchUsersController,
+  deleteUserController,
+};
