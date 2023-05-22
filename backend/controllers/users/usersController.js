@@ -1,7 +1,7 @@
 const expressAsyncHandler = require("express-async-handler");
 const User = require("../../model/user/User");
 const generateToken = require("../../config/token/generateToken");
-const validateMongoId = require("../utils/validateMongoId");
+const validateMongoId = require("../../utils/validateMongoId");
 
 /* Register */
 const userRegisterController = expressAsyncHandler(async (req, res) => {
@@ -46,6 +46,7 @@ const loginUserController = expressAsyncHandler(async (req, res) => {
 });
 
 const fetchUsersController = expressAsyncHandler(async (req, res) => {
+  console.log(req.headers);
   try {
     const users = await User.find({});
     res.json(users);
@@ -57,10 +58,33 @@ const fetchUsersController = expressAsyncHandler(async (req, res) => {
 const deleteUserController = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   //check if user is valid
-  validateMongoId(id)
+  validateMongoId(id);
   try {
     const deletedUser = await User.findByIdAndDelete(id);
     res.json(deletedUser);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+const fetchUserDetailsController = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  //check if user is valid
+  validateMongoId(id);
+  try {
+    const user = await User.findById(id);
+    res.json(user);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+const userProfileController = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoId(id);
+  try {
+    const myProfile = await User.findById(id);
+    res.json(myProfile);
   } catch (error) {
     res.json(error);
   }
@@ -71,4 +95,6 @@ module.exports = {
   loginUserController,
   fetchUsersController,
   deleteUserController,
+  fetchUserDetailsController,
+  userProfileController,
 };
