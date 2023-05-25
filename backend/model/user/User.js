@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-//Create Schema
+//create schema
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -18,16 +18,15 @@ const userSchema = new mongoose.Schema(
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
     },
     email: {
-      required: [true, "Email is required"],
       type: String,
-      unique: true,
+      required: [true, "Email is required"],
     },
     bio: {
       type: String,
     },
     password: {
-      required: [true, "Password is required"],
       type: String,
+      required: [true, "Hei buddy Password is required"],
     },
     postCount: {
       type: Number,
@@ -49,13 +48,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isUnfollowing: {
+    isUnFollowing: {
       type: Boolean,
       default: false,
     },
     isAccountVerified: { type: Boolean, default: false },
     accountVerificationToken: String,
     accountVerificationTokenExpires: Date,
+
     viewedBy: {
       type: [
         {
@@ -64,6 +64,7 @@ const userSchema = new mongoose.Schema(
         },
       ],
     },
+
     followers: {
       type: [
         {
@@ -81,8 +82,9 @@ const userSchema = new mongoose.Schema(
       ],
     },
     passwordChangeAt: Date,
-    passwordResetToken: String,
+    passwordRessetToken: String,
     passwordResetExpires: Date,
+
     active: {
       type: Boolean,
       default: false,
@@ -95,18 +97,19 @@ const userSchema = new mongoose.Schema(
     toObject: {
       virtuals: true,
     },
-    timeStamps: true,
+    timestamps: true,
   }
 );
 
 //Hash password
 userSchema.pre("save", async function (next) {
+  //hash password
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
-//Match password
+//match password
 userSchema.methods.isPasswordMatched = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

@@ -90,6 +90,42 @@ const userProfileController = expressAsyncHandler(async (req, res) => {
   }
 });
 
+const updateUserController = expressAsyncHandler(async (req, res) => {
+  const { _id } = req?.user;
+  console.log(req.user);
+  validateMongoId(_id);
+
+  const user = await User.findByIdAndUpdate(
+    _id,
+    {
+      firstName: req?.body?.firstName,
+      lastName: req?.body?.lastName,
+      email: req?.body?.email,
+      bio: req?.body?.bio,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.json(user);
+});
+
+const updateUserPasswordController = expressAsyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { password } = req.body;
+  validateMongoId(_id);
+  //find the user by _id
+  const user = await User.findById(_id);
+
+  if (password) {
+    user.password = password;
+    const updateUser = await user.save();
+    res.json(updateUser);
+  }
+  res.json(user);
+});
+
 module.exports = {
   userRegisterController,
   loginUserController,
@@ -97,4 +133,6 @@ module.exports = {
   deleteUserController,
   fetchUserDetailsController,
   userProfileController,
+  updateUserController,
+  updateUserPasswordController,
 };
