@@ -1,6 +1,11 @@
 const express = require("express");
 const {
   createPostController,
+  fetchPostsController,
+  fetchPostController,
+  updatePostController,
+  deletePostController,
+  addLikeToPostController,
 } = require("../../controllers/posts/postController");
 const authMiddleware = require("../../middlewares/auth/authMiddleware");
 const {
@@ -17,5 +22,14 @@ postRoute.post(
   postImgResize,
   createPostController
 );
+
+postRoute.put("/likes", authMiddleware, addLikeToPostController);
+
+postRoute.get("/", fetchPostsController);
+postRoute.get("/:id", fetchPostController);
+postRoute.put("/:id", authMiddleware, updatePostController);
+postRoute.delete("/:id", authMiddleware, deletePostController);
+
+
 
 module.exports = postRoute;

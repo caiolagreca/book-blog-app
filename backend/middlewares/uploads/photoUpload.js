@@ -49,7 +49,7 @@ const postImgResize = async (req, res, next) => {
     .resize(500, 500)
     .toFormat("jpeg")
     .jpeg({ quality: 90 })
-    .toFile(path.join(`public/images/profile/${req.file.filename}`));
+    .toFile(path.join(`public/images/posts/${req.file.filename}`));
   next();
 };
 
