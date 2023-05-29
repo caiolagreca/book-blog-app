@@ -17,7 +17,7 @@ const postSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isDisLiked: {
+    isDisliked: {
       type: Boolean,
       default: false,
     },

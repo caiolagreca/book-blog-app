@@ -5,6 +5,7 @@ const dbConnect = require("./config/db/dbConnect");
 const userRoutes = require("./route/users/usersRoute");
 const { errorHandler, notFound } = require("./middlewares/error/errorHandler");
 const postRoute = require("./route/posts/postRoute");
+const commentRoute = require("./route/comments/commentRoute");
 
 const app = express();
 //DB
@@ -18,6 +19,9 @@ app.use("/api/users", userRoutes);
 
 //Post route
 app.use("/api/posts", postRoute);
+
+//Comment route
+app.use("/api/comments", commentRoute);
 
 //err handler
 app.use(notFound);
