@@ -6,7 +6,8 @@ const userRoutes = require("./route/users/usersRoute");
 const { errorHandler, notFound } = require("./middlewares/error/errorHandler");
 const postRoute = require("./route/posts/postRoute");
 const commentRoute = require("./route/comments/commentRoute");
-const emailMessageRoute = require("./route/emailMessages/emailMessage");
+const emailMessageRoute = require("./route/emailMessages/emailMessageRoute");
+const categoryRoute = require("./route/categories/categoryRoute");
 
 const app = express();
 //DB
@@ -15,17 +16,11 @@ dbConnect();
 //Middleware
 app.use(express.json());
 
-//Users route
 app.use("/api/users", userRoutes);
-
-//Post route
 app.use("/api/posts", postRoute);
-
-//Comment route
 app.use("/api/comments", commentRoute);
-
-//Email message route
 app.use("/api/email", emailMessageRoute);
+app.use("/api/category", categoryRoute);
 
 //err handler
 app.use(notFound);
