@@ -6,6 +6,7 @@ const userRoutes = require("./route/users/usersRoute");
 const { errorHandler, notFound } = require("./middlewares/error/errorHandler");
 const postRoute = require("./route/posts/postRoute");
 const commentRoute = require("./route/comments/commentRoute");
+const emailMessageRoute = require("./route/emailMessages/emailMessage");
 
 const app = express();
 //DB
@@ -22,6 +23,9 @@ app.use("/api/posts", postRoute);
 
 //Comment route
 app.use("/api/comments", commentRoute);
+
+//Email message route
+app.use("/api/email", emailMessageRoute);
 
 //err handler
 app.use(notFound);
