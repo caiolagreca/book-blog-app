@@ -1,3 +1,5 @@
 Book Blog App - Loading...
 
-WARNING: runValidators is not working!
+TODO: 
+runValidators is not working!
+create API KEY on SendGrid
