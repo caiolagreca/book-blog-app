@@ -1,6 +1,9 @@
 import { useFormik } from "formik";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+import { registerUserAction } from "../../../redux/slices/users/usersSlices";
+import { Redirect } from "react-router-dom/cjs/react-router-dom";
 
 const formSchema = Yup.object({
   firstName: Yup.string().required("First Name is required"),
@@ -10,6 +13,8 @@ const formSchema = Yup.object({
 });
 
 const Register = () => {
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -18,10 +23,19 @@ const Register = () => {
       password: "",
     },
     onSubmit: (values) => {
+      dispatch(registerUserAction(values));
       console.log(values);
     },
     validationSchema: formSchema,
   });
+
+  const storeData = useSelector((store) => store?.users);
+  const { loading, appErr, serverErr, registered } = storeData;
+
+  if (registered) {
+    return <Redirect to="/profile" />;
+  }
+
   return (
     <section className="relative py-20 2xl:py-40 bg-gray-800 overflow-hidden">
       <div className="relative container px-4 mx-auto">
@@ -41,7 +55,12 @@ const Register = () => {
               <div className="px-6 lg:px-20 py-12 lg:py-24 bg-gray-600 rounded-lg">
                 <form onSubmit={formik.handleSubmit}>
                   <h3 className="mb-10 text-2xl text-white font-bold font-heading">
-                    Register Account–
+                    Register Account
+                    {appErr || serverErr ? (
+                      <div className="text-red-500">
+                        {serverErr} {appErr}
+                      </div>
+                    ) : null}
                   </h3>
                   <div className="flex items-center pl-6 mb-3 bg-white rounded-full">
                     <span className="inline-block pr-3 py-2 border-r border-gray-50">
@@ -231,12 +250,21 @@ const Register = () => {
 
                   <div className="inline-flex mb-10"></div>
 
-                  <button
-                    type="submit"
-                    className="py-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-full transition duration-200"
-                  >
-                    Register
-                  </button>
+                  {loading ? (
+                    <button
+                      disabled
+                      className="py-4 w-full bg-gray-500 text-white font-bold rounded-full transition duration-200"
+                    >
+                      Loading, please wait
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="py-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-full transition duration-200"
+                    >
+                      Register
+                    </button>
+                  )}
                 </form>
               </div>
             </div>
