@@ -21,14 +21,13 @@ const Login = () => {
     },
     onSubmit: (values) => {
       dispatch(loginUserAction(values));
-      console.log(values);
     },
     validationSchema: formSchema,
   });
 
   const store = useSelector((state) => state?.users);
-  console.log(store);
   const { userAuth, loading, serverErr, appErr } = store;
+  if (userAuth) return <Redirect to="/profile" />;
   return (
     <>
       <section className="min-h-screen relative py-20 2xl:py-40 bg-gray-900 overflow-hidden">
