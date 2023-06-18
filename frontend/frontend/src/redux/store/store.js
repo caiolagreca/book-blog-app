@@ -5,8 +5,9 @@ import categoriesReducer from "../slices/categories/categoriesSlices";
 const store = configureStore({
   reducer: {
     users: usersReducer,
-    categories: categoriesReducer,
+    category: categoriesReducer,
   },
 });
 
 export default store;
+ 

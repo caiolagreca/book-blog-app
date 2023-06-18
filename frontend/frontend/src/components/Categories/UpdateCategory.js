@@ -1,37 +1,54 @@
 import { PlusCircleIcon, BookOpenIcon } from "@heroicons/react/solid";
 import { useDispatch, useSelector } from "react-redux";
-import { createCategoryAction } from "../../redux/slices/categories/categoriesSlices";
+import {
+  fetchCategoryAction,
+  updateCategoriesAction,
+  deleteCategoriesAction,
+} from "../../redux/slices/categories/categoriesSlices";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useEffect } from "react";
+import { Redirect } from "react-router-dom/cjs/react-router-dom";
 
 const formSchema = Yup.object({
   title: Yup.string().required("Title is required"),
 });
 
-const AddNewCategory = () => {
+const UpdateCategory = ({
+  match: {
+    params: { id },
+  },
+}) => {
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(fetchCategoryAction(id));
+  }, []);
+
+  const state = useSelector((state) => state?.category);
+
+  const { loading, appErr, serverErr, category, updateCategory } = state;
+  console.log(updateCategory);
+
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      title: "",
+      title: category?.title,
     },
     onSubmit: (values) => {
-      dispatch(createCategoryAction(values));
+      dispatch(updateCategoriesAction({ title: values.title, id }));
     },
     validationSchema: formSchema,
   });
 
-  const state = useSelector((state) => state?.category);
-
-  const { loading, appErr, serverErr, category } = state;
-
+  if (updateCategory) return <Redirect to="/category-list" />;
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <BookOpenIcon className="mx-auto h-12 w-auto" />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Add New Category
+            Update Category
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             <p className="font-medium text-indigo-600 hover:text-indigo-500">
@@ -87,18 +104,27 @@ const AddNewCategory = () => {
                   Loading please wait...
                 </button>
               ) : (
-                <button
-                  type="submit"
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <PlusCircleIcon
-                      className="h-5 w-5 text-yellow-500 group-hover:text-indigo-400"
-                      aria-hidden="true"
-                    />
-                  </span>
-                  Add new Category
-                </button>
+                <>
+                  <button
+                    type="submit"
+                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                      <PlusCircleIcon
+                        className="h-5 w-5 text-yellow-500 group-hover:text-indigo-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                    Update Category
+                  </button>
+                  <button
+                    onClick={() => dispatch(deleteCategoriesAction(id))}
+                    type="submit"
+                    className="group mt-2 relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Delete Category
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -108,4 +134,4 @@ const AddNewCategory = () => {
   );
 };
 
-export default AddNewCategory;
+export default UpdateCategory;
