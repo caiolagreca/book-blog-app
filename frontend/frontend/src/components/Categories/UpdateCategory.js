@@ -15,7 +15,7 @@ const formSchema = Yup.object({
 });
 
 const UpdateCategory = ({
-  match: {
+  computedMatch: {
     params: { id },
   },
 }) => {
@@ -27,8 +27,7 @@ const UpdateCategory = ({
 
   const state = useSelector((state) => state?.category);
 
-  const { loading, appErr, serverErr, category, updateCategory } = state;
-  console.log(updateCategory);
+  const { loading, appErr, serverErr, category, isEdited, isDeleted } = state;
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -41,7 +40,7 @@ const UpdateCategory = ({
     validationSchema: formSchema,
   });
 
-  if (updateCategory) return <Redirect to="/category-list" />;
+  if (isEdited || isDeleted) return <Redirect to="/category-list" />;
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
